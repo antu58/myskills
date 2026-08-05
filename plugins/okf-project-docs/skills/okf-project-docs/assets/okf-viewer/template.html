@@ -283,9 +283,10 @@
     .diagram-source { border-top: 1px solid var(--line); }
     .diagram-source summary { padding: 9px 14px; color: var(--muted); cursor: pointer; font-size: 10px; }
     .diagram-source pre { max-height: 260px; margin: 0; overflow: auto; padding: 14px; border-top: 1px solid var(--line); background: var(--code-bg); color: var(--code-text); font-size: 11px; line-height: 1.5; }
-    .diagram-card.is-expanded { position: fixed; inset: 16px; z-index: 100; display: flex; margin: 0; flex-direction: column; }
+    .diagram-card.is-expanded { position: fixed; inset: 0; z-index: 100; display: flex; margin: 0; flex-direction: column; border: 0; border-radius: 0; }
     .diagram-card.is-expanded .diagram-viewport { height: auto; flex: 1; }
     .diagram-card.is-expanded .diagram-source { display: none; }
+    .diagram-card.is-expanded [data-action="expand"] { width: auto; min-width: 48px; padding: 0 10px; border-color: var(--text); background: var(--text); color: var(--panel-solid); font-size: 10px; font-weight: 700; }
     body.has-expanded-diagram { overflow: hidden; }
 
     .sidebar-scrim { display: none; }
@@ -564,7 +565,7 @@
                       <button class="diagram-button" data-action="zoom-out" title="缩小" aria-label="缩小">−</button>
                       <button class="diagram-button" data-action="zoom-in" title="放大" aria-label="放大">＋</button>
                       <button class="diagram-button" data-action="fit" title="适应画布" aria-label="适应画布">⌖</button>
-                      <button class="diagram-button" data-action="expand" title="展开" aria-label="展开">↗</button>
+                      <button class="diagram-button" data-action="expand" title="展开" aria-label="展开" aria-expanded="false">↗</button>
                     </div>
                   </header>
                   <div class="diagram-viewport" tabindex="0" data-mermaid="${escapeHtml(source)}">
@@ -737,6 +738,16 @@
         }
       }
 
+      function setDiagramExpanded(card, expanded) {
+        const button = card.querySelector("[data-action='expand']")
+        card.classList.toggle("is-expanded", expanded)
+        document.body.classList.toggle("has-expanded-diagram", expanded)
+        button.textContent = expanded ? "关闭" : "↗"
+        button.title = expanded ? "关闭展开视图" : "展开"
+        button.setAttribute("aria-label", expanded ? "关闭展开视图" : "展开")
+        button.setAttribute("aria-expanded", String(expanded))
+      }
+
       function setupPanZoom(card, viewport, canvas) {
         const svg = canvas.querySelector("svg")
         if (!svg) return
@@ -803,8 +814,7 @@
         card.querySelector("[data-action='zoom-out']").addEventListener("click", () => zoom(1 / 1.2))
         card.querySelector("[data-action='fit']").addEventListener("click", fit)
         card.querySelector("[data-action='expand']").addEventListener("click", () => {
-          card.classList.toggle("is-expanded")
-          document.body.classList.toggle("has-expanded-diagram", card.classList.contains("is-expanded"))
+          setDiagramExpanded(card, !card.classList.contains("is-expanded"))
           requestAnimationFrame(fit)
         })
       }
@@ -924,8 +934,7 @@
           closeSidebar()
           const expanded = document.querySelector(".diagram-card.is-expanded")
           if (expanded) {
-            expanded.classList.remove("is-expanded")
-            document.body.classList.remove("has-expanded-diagram")
+            setDiagramExpanded(expanded, false)
             requestAnimationFrame(() => diagramStates.get(expanded)?.fit())
           }
         }
