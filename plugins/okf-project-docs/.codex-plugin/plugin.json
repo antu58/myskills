@@ -1,0 +1,27 @@
+{
+  "name": "okf-project-docs",
+  "version": "0.1.0",
+  "description": "Create and maintain Chinese-first OKF project documentation with an interactive static viewer.",
+  "author": {
+    "name": "antu58",
+    "url": "https://github.com/antu58"
+  },
+  "homepage": "https://github.com/antu58/myskills",
+  "repository": "https://github.com/antu58/myskills",
+  "license": "MIT",
+  "keywords": ["okf", "documentation", "knowledge-base", "mermaid", "viewer"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OKF Project Docs",
+    "shortDescription": "创建中文优先的 OKF 项目文档和可交互静态浏览器",
+    "longDescription": "创建、重构和维护符合 OKF 规范的项目文档，并生成单文件静态浏览器，支持 Mermaid 流程图和时序图的拖拽、缩放与全屏查看。",
+    "developerName": "antu58",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/antu58/myskills",
+    "defaultPrompt": [
+      "使用 $okf-project-docs 为当前项目创建中文 OKF 文档和可交互 viewer.html。",
+      "使用 $okf-project-docs 检查并更新现有 OKF 文档包。"
+    ]
+  }
+}

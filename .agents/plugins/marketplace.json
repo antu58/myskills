@@ -5,10 +5,22 @@
   },
   "plugins": [
     {
-      "name": "myskills",
+      "name": "okf-project-docs",
       "source": {
         "source": "local",
-        "path": "./plugins/myskills"
+        "path": "./plugins/okf-project-docs"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "model-raw-requirements",
+      "source": {
+        "source": "local",
+        "path": "./plugins/model-raw-requirements"
       },
       "policy": {
         "installation": "AVAILABLE",
