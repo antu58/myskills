@@ -1,0 +1,20 @@
+{
+  "name": "antu58-myskills",
+  "interface": {
+    "displayName": "Antu58 Skills"
+  },
+  "plugins": [
+    {
+      "name": "myskills",
+      "source": {
+        "source": "local",
+        "path": "./plugins/myskills"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

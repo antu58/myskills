@@ -1,0 +1,4 @@
+interface:
+  display_name: "碎片需求业务建模"
+  short_description: "将零散需求整理为统一、完整的 OKF 业务模型与决策清单"
+  default_prompt: "使用 $model-raw-requirements 将这些零散需求素材整理为 OKF 业务流程、时序、状态、实体、规则和待决策模型。"

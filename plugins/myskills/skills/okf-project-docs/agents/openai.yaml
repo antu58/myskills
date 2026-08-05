@@ -1,0 +1,4 @@
+interface:
+  display_name: "OKF 项目文档"
+  short_description: "创建中文 OKF 文档，并生成可拖拽缩放的静态图表浏览器"
+  default_prompt: "Use $okf-project-docs to create a Chinese-first OKF bundle and generate its drag-and-zoom viewer.html."
