@@ -42,12 +42,22 @@ def build(bundle_root: Path, output_name: str) -> Path:
         raise ValueError("--output must be a filename placed at the bundle root")
 
     files = []
-    for path in sorted(root.rglob("*.md"), key=lambda item: (len(item.relative_to(root).parts), item.as_posix())):
+    for path in sorted(
+        root.rglob("*.md"),
+        key=lambda item: (len(item.relative_to(root).parts), item.relative_to(root).as_posix().casefold()),
+    ):
         relative = path.relative_to(root)
         if any(part.startswith(".") for part in relative.parts):
             continue
         content = path.read_text(encoding="utf-8")
-        files.append({"path": relative.as_posix(), "content": content, **metadata(content, relative)})
+        files.append(
+            {
+                "path": relative.as_posix(),
+                "name": relative.name,
+                "content": content,
+                **metadata(content, relative),
+            }
+        )
 
     skill_root = Path(__file__).resolve().parent.parent
     template = (skill_root / "assets" / "okf-viewer" / "template.html").read_text(encoding="utf-8")
@@ -55,7 +65,7 @@ def build(bundle_root: Path, output_name: str) -> Path:
     if template.count("__OKF_DATA__") != 1 or template.count("/*__MERMAID_RUNTIME__*/") != 1:
         raise ValueError("viewer template placeholders are missing or duplicated")
 
-    payload = json.dumps({"version": 1, "files": files}, ensure_ascii=True, separators=(",", ":"))
+    payload = json.dumps({"version": 2, "files": files}, ensure_ascii=True, separators=(",", ":"))
     payload = payload.replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
     html = template.replace("__OKF_DATA__", payload).replace(
         "/*__MERMAID_RUNTIME__*/", runtime.replace("</script", "<\\/script")

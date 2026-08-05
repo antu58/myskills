@@ -75,24 +75,10 @@
       border-right: 1px solid var(--line);
       background: var(--panel);
       backdrop-filter: blur(22px) saturate(1.25);
+      transition: transform 180ms ease;
     }
     .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
       padding: 22px 20px 15px;
-    }
-    .brand-mark {
-      display: grid;
-      width: 38px;
-      height: 38px;
-      place-items: center;
-      border-radius: 12px;
-      background: var(--accent);
-      color: var(--panel-solid);
-      font-weight: 800;
-      letter-spacing: -0.06em;
-      box-shadow: 0 8px 20px rgba(39, 107, 87, 0.22);
     }
     .brand-copy { min-width: 0; }
     .brand-title { font-size: 14px; font-weight: 760; letter-spacing: 0.02em; }
@@ -199,7 +185,7 @@
       font-size: 10px;
     }
 
-    .main { min-height: 100vh; margin-left: var(--sidebar-width); }
+    .main { min-height: 100vh; margin-left: var(--sidebar-width); transition: margin-left 180ms ease; }
     .toolbar {
       position: sticky;
       top: 0;
@@ -214,7 +200,7 @@
       backdrop-filter: blur(18px);
     }
     .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: 8px; min-width: 0; }
-    .menu-button { display: none; }
+    .menu-button { display: inline-grid; flex: 0 0 auto; }
     .icon-button, .diagram-button {
       display: inline-grid;
       width: 34px;
@@ -310,13 +296,16 @@
       .workspace { grid-template-columns: minmax(0, 1fr); max-width: 900px; }
       .outline { display: none; }
     }
+    @media (min-width: 761px) {
+      body.sidebar-collapsed .sidebar { transform: translateX(-102%); pointer-events: none; }
+      body.sidebar-collapsed .main { margin-left: 0; }
+    }
     @media (max-width: 760px) {
-      .sidebar { transform: translateX(-102%); transition: transform 180ms ease; }
+      .sidebar { transform: translateX(-102%); }
       .sidebar.is-open { transform: translateX(0); }
       .sidebar-scrim { position: fixed; inset: 0; z-index: 25; display: block; border: 0; background: rgba(0,0,0,0.35); opacity: 0; pointer-events: none; transition: opacity 180ms ease; }
       .sidebar-scrim.is-open { opacity: 1; pointer-events: auto; }
       .main { margin-left: 0; }
-      .menu-button { display: inline-grid; }
       .workspace { padding: 32px 20px 90px; }
       .toolbar { padding: 0 12px; }
       .doc-title { font-size: 34px; }
@@ -337,7 +326,6 @@
   <div class="app">
     <aside class="sidebar" id="sidebar">
       <div class="brand">
-        <div class="brand-mark">O</div>
         <div class="brand-copy">
           <div class="brand-title">OKF Explorer</div>
           <div class="brand-subtitle">Open Knowledge Format</div>
@@ -354,7 +342,7 @@
     <main class="main">
       <header class="toolbar">
         <div class="toolbar-left">
-          <button class="icon-button menu-button" id="menu-button" aria-label="打开目录">☰</button>
+          <button class="icon-button menu-button" id="menu-button" aria-label="收起文件目录" aria-controls="sidebar" aria-expanded="true" title="收起文件目录">☰</button>
           <span class="path-label" id="path-label"></span>
         </div>
         <div class="toolbar-right">
@@ -376,7 +364,7 @@
   <script>
     (() => {
       const payload = JSON.parse(document.getElementById("okf-data").textContent)
-      const files = payload.files
+      const files = payload.files.map((file) => ({ ...file, name: file.name || file.path.split("/").pop() }))
       const filesByPath = new Map(files.map((file) => [file.path, file]))
       const diagramStates = new WeakMap()
       const elements = {
@@ -663,7 +651,7 @@
         const normalized = query.trim().toLowerCase()
         elements.tree.replaceChildren()
         if (normalized) {
-          const matches = files.filter((file) => `${file.title}\n${file.path}\n${file.description}\n${file.content}`.toLowerCase().includes(normalized))
+          const matches = files.filter((file) => `${file.name}\n${file.title}\n${file.path}\n${file.description}\n${file.content}`.toLowerCase().includes(normalized))
           matches.forEach((file) => elements.tree.append(fileButton(file, true)))
           if (!matches.length) elements.tree.innerHTML = '<div class="empty-state">没有找到匹配的文档。<br>试试更短的关键词。</div>'
           return
@@ -672,18 +660,18 @@
         const root = { directories: new Map(), files: [] }
         files.forEach((file) => {
           const parts = file.path.split("/")
-          const filename = parts.pop()
+          parts.pop()
           let node = root
           parts.forEach((part) => {
             if (!node.directories.has(part)) node.directories.set(part, { directories: new Map(), files: [] })
             node = node.directories.get(part)
           })
-          node.files.push({ ...file, filename })
+          node.files.push(file)
         })
 
         const appendNode = (node, container, prefix = "") => {
           node.files
-            .sort((left, right) => (left.filename === "index.md" ? -1 : right.filename === "index.md" ? 1 : left.title.localeCompare(right.title, "zh-CN")))
+            .sort((left, right) => (left.name === "index.md" ? -1 : right.name === "index.md" ? 1 : left.name.localeCompare(right.name, "zh-CN")))
             .forEach((file) => container.append(fileButton(file, false)))
           Array.from(node.directories.entries())
             .sort(([left], [right]) => left.localeCompare(right, "zh-CN"))
@@ -707,7 +695,8 @@
         const button = document.createElement("button")
         button.className = `file-link${file.path === currentPath ? " is-active" : ""}`
         button.dataset.path = file.path
-        button.innerHTML = `<span class="file-name">${escapeHtml(file.title)}</span><span class="file-kind">${escapeHtml(file.type)}</span>${showPath ? `<span class="search-path">${escapeHtml(file.path)}</span>` : ""}`
+        button.title = file.path
+        button.innerHTML = `<span class="file-name">${escapeHtml(file.name)}</span><span class="file-kind">${escapeHtml(file.type)}</span>${showPath ? `<span class="search-path">${escapeHtml(file.path)}</span>` : ""}`
         button.addEventListener("click", () => openDocument(file.path))
         return button
       }
@@ -848,12 +837,38 @@
       }
 
       function openSidebar() {
+        if (!matchMedia("(max-width: 760px)").matches) {
+          document.body.classList.remove("sidebar-collapsed")
+          updateMenuState()
+          return
+        }
         elements.sidebar.classList.add("is-open")
         elements.scrim.classList.add("is-open")
+        updateMenuState()
       }
       function closeSidebar() {
+        if (!matchMedia("(max-width: 760px)").matches) return
         elements.sidebar.classList.remove("is-open")
         elements.scrim.classList.remove("is-open")
+        updateMenuState()
+      }
+      function updateMenuState() {
+        const expanded = matchMedia("(max-width: 760px)").matches
+          ? elements.sidebar.classList.contains("is-open")
+          : !document.body.classList.contains("sidebar-collapsed")
+        const label = expanded ? "收起文件目录" : "展开文件目录"
+        elements.menu.setAttribute("aria-expanded", String(expanded))
+        elements.menu.setAttribute("aria-label", label)
+        elements.menu.title = label
+      }
+      function toggleSidebar() {
+        if (matchMedia("(max-width: 760px)").matches) {
+          if (elements.sidebar.classList.contains("is-open")) closeSidebar()
+          else openSidebar()
+          return
+        }
+        document.body.classList.toggle("sidebar-collapsed")
+        updateMenuState()
       }
       function showToast(message) {
         clearTimeout(toastTimer)
@@ -879,7 +894,7 @@
       }
 
       elements.search.addEventListener("input", () => renderTree(elements.search.value))
-      elements.menu.addEventListener("click", openSidebar)
+      elements.menu.addEventListener("click", toggleSidebar)
       elements.scrim.addEventListener("click", closeSidebar)
       elements.copy.addEventListener("click", () => copyText(currentPath))
       elements.theme.addEventListener("click", () => {
@@ -896,6 +911,13 @@
       addEventListener("popstate", () => {
         const path = decodeURIComponent(location.hash.slice(1))
         if (filesByPath.has(path) && path !== currentPath) openDocument(path, false)
+      })
+      addEventListener("resize", () => {
+        if (!matchMedia("(max-width: 760px)").matches) {
+          elements.sidebar.classList.remove("is-open")
+          elements.scrim.classList.remove("is-open")
+        }
+        updateMenuState()
       })
       addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
@@ -914,6 +936,7 @@
       })
 
       document.documentElement.dataset.theme = theme
+      updateMenuState()
       elements.count.textContent = `${files.length} FILES`
       if (currentPath) openDocument(currentPath, false)
       else elements.document.innerHTML = '<div class="empty-state">这个 OKF 目录中还没有 Markdown 文档。</div>'

@@ -13,7 +13,7 @@ Follow OKF v0.1 unless the user provides a newer version or a project-specific c
 
 ## Language Priority
 
-Write generated documentation in Chinese by default. 默认优先使用中文撰写项目文档。Use another language only when the user explicitly requests it or when an existing project documentation set clearly uses that language and changing it would be disruptive. Keep code identifiers, route names, filenames, config keys, protocol names, and established product names in their original form.
+Write generated documentation in Chinese by default. 默认优先使用中文撰写项目文档。Use another language only when the user explicitly requests it or when an existing project documentation set clearly uses that language and changing it would be disruptive. Prefer concise Chinese filenames for newly created non-reserved concept documents, such as `用户服务.md`, `支付回调.md`, and `故障恢复.md`. Keep reserved structural or generated filenames such as `index.md`, `log.md`, and `viewer.html` unchanged. Preserve existing filenames, and keep code identifiers, route names, config keys, protocol names, and established product names in their original form when they appear in filenames or content.
 
 When adapting templates or examples from `references/okf-v0-1.md`, translate visible prose, section headings, descriptions, indexes, and log entries to Chinese. OKF `type` values may stay in concise English when that keeps machine-readable taxonomy stable.
 
@@ -27,7 +27,7 @@ When adapting templates or examples from `references/okf-v0-1.md`, translate vis
 6. Use `log.md` files only for chronological updates. Keep newest dates first.
 7. Cross-link related concepts with Markdown links. Prefer bundle-root absolute links like `/services/user-service.md` when the bundle will be consumed as a standalone OKF directory.
 8. Add a citations section when claims depend on source files, external docs, tickets, diagrams, or operational evidence. In Chinese docs, prefer `# 引用`; use `# Citations` only when writing English docs.
-9. Write in Chinese by default unless the user explicitly requests another language. Keep filenames stable, lowercase, and hyphenated when possible.
+9. Write in Chinese by default unless the user explicitly requests another language. Name new non-reserved concept files in concise Chinese by default. Preserve reserved filenames, existing names, and code-derived filenames when renaming would reduce traceability or break links.
 10. Run `scripts/validate_okf_bundle.py <bundle-root>` before finishing when files were created or changed.
 11. Run `scripts/build_okf_viewer.py <bundle-root>` after Markdown changes so the bundle-root `viewer.html` embeds the current documents.
 12. Open `viewer.html` in a browser for a smoke check when the bundle contains Mermaid diagrams or the viewer implementation changed.
@@ -36,6 +36,7 @@ When adapting templates or examples from `references/okf-v0-1.md`, translate vis
 
 - Treat `viewer.html` as a generated bundle artifact. Do not hand-edit it.
 - Generate it from `assets/okf-viewer/template.html` with `scripts/build_okf_viewer.py`; the builder embeds the bundle's Markdown and Mermaid runtime into one portable HTML file.
+- Build the navigation by recursively scanning Markdown files under the bundle root. Preserve each file's real bundle-relative path and original filename in the generated viewer; do not replace navigation labels with frontmatter titles.
 - Keep it at the bundle root so the user can open it directly without starting a server or granting directory access.
 - Preserve Mermaid source in fenced `mermaid` blocks. The viewer renders each diagram in a pan-and-zoom canvas with wheel zoom, pointer drag, fit/reset, and expanded view.
 - Rebuild the viewer whenever any bundle Markdown changes. Do not include `viewer.html` in concept indexes or citations because it is a derived navigation artifact.
