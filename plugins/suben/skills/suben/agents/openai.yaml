@@ -1,0 +1,7 @@
+interface:
+  display_name: "溯本"
+  short_description: "深入审视目标与系统，拓展知识和方案视野，寻找整体最优解"
+  default_prompt: "请用 $suben 深入分析当前问题：澄清最终目标，拓展我的知识和方案视野，检验系统因果与长期取舍，提出最优方案建议；是否实施及实施范围由我决定。"
+
+policy:
+  allow_implicit_invocation: false

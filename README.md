@@ -10,6 +10,7 @@
 | --- | --- | --- |
 | `okf-project-docs` | 创建、重构和维护中文优先的 OKF 项目文档，并生成单文件 `viewer.html`。Viewer 使用真实相对路径和原始文件名，支持 Mermaid 流程图、时序图的拖拽、缩放和全屏查看。 | 架构文档、服务/API/数据/事件文档、Runbook、ADR、项目知识库。 |
 | `model-raw-requirements` | 将零散、非正式或互相冲突的需求材料整理为可评审、可追溯的 OKF 业务模型。 | 从文档、表格、会议记录、聊天和利益相关者陈述中提炼范围、角色、流程、时序和状态模型。 |
+| `suben`（溯本） | 主动调用后深入审视目标与系统，拓展领域知识和方案视野，寻找符合整体目标的最优方案；实施决策由用户确定。 | 重新定义问题、追溯系统因果、评估方案及长期代价。 |
 
 ## 首次安装
 
@@ -37,11 +38,18 @@ codex plugin add okf-project-docs@antu58-myskills
 codex plugin add model-raw-requirements@antu58-myskills
 ```
 
-需要两个 Skill 时可以都执行：
+只安装溯本 Skill：
+
+```bash
+codex plugin add suben@antu58-myskills
+```
+
+需要全部 Skill 时可以依次执行：
 
 ```bash
 codex plugin add okf-project-docs@antu58-myskills
 codex plugin add model-raw-requirements@antu58-myskills
+codex plugin add suben@antu58-myskills
 ```
 
 安装完成后请创建一个新的 Codex 任务，让 Codex 加载新安装的 Skill。
@@ -71,12 +79,20 @@ codex plugin marketplace upgrade antu58-myskills
 codex plugin add model-raw-requirements@antu58-myskills
 ```
 
-同时更新两个 Plugin 时，Marketplace 只需刷新一次：
+更新 `suben`：
+
+```bash
+codex plugin marketplace upgrade antu58-myskills
+codex plugin add suben@antu58-myskills
+```
+
+同时更新多个 Plugin 时，Marketplace 只需刷新一次：
 
 ```bash
 codex plugin marketplace upgrade antu58-myskills
 codex plugin add okf-project-docs@antu58-myskills
 codex plugin add model-raw-requirements@antu58-myskills
+codex plugin add suben@antu58-myskills
 ```
 
 更新完成后同样建议创建一个新的 Codex 任务，以加载新版本。
@@ -97,6 +113,12 @@ codex plugin remove okf-project-docs@antu58-myskills
 codex plugin remove model-raw-requirements@antu58-myskills
 ```
 
+卸载 `suben`：
+
+```bash
+codex plugin remove suben@antu58-myskills
+```
+
 如果已经卸载所有 Plugin，并且不再需要这个 Marketplace，可以继续移除 Marketplace：
 
 ```bash
@@ -110,9 +132,12 @@ codex plugin marketplace remove antu58-myskills
 ```text
 $okf-project-docs 为当前项目创建中文 OKF 文档，并生成可交互 viewer.html。
 $model-raw-requirements 将这些零散需求整理为可评审的业务模型。
+$suben 深入审视当前问题，拓展我的知识和方案视野，提出最优方案建议。
 ```
 
-也可以直接描述想要的结果，由 Codex 根据 Skill 的 `description` 自动选择工作流。
+`okf-project-docs` 和 `model-raw-requirements` 也可以通过直接描述想要的结果，由 Codex 根据 Skill 的 `description` 自动选择工作流。
+
+`suben`（溯本）仅主动调用时启用，不作为默认工作策略。调用即要求深入的系统性分析，不因问题看似简单而降低分析深度；是否实施、何时实施以及实施范围由用户决定。
 
 ## 从旧版 `myskills` Plugin 迁移
 
@@ -144,6 +169,8 @@ plugins/okf-project-docs/.codex-plugin/plugin.json
 plugins/okf-project-docs/skills/okf-project-docs/
 plugins/model-raw-requirements/.codex-plugin/plugin.json
 plugins/model-raw-requirements/skills/model-raw-requirements/
+plugins/suben/.codex-plugin/plugin.json
+plugins/suben/skills/suben/
 ```
 
 ## License

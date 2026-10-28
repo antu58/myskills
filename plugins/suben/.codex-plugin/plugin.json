@@ -1,0 +1,35 @@
+{
+  "name": "suben",
+  "version": "0.1.0",
+  "description": "Explicitly invoked, in-depth systems analysis that clarifies goals, broadens knowledge and options, and recommends solutions while leaving implementation decisions to the user.",
+  "author": {
+    "name": "antu58",
+    "url": "https://github.com/antu58"
+  },
+  "homepage": "https://github.com/antu58/myskills",
+  "repository": "https://github.com/antu58/myskills",
+  "license": "MIT",
+  "keywords": [
+    "systems-thinking",
+    "problem-framing",
+    "root-cause-analysis",
+    "decision-making",
+    "double-loop-learning"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "溯本",
+    "shortDescription": "深入审视目标与系统，拓展知识和方案视野，寻找整体最优解",
+    "longDescription": "仅主动调用时启用。深入澄清最终目标、检验问题定义、追溯系统因果，补充领域知识并比较实质不同的方案，结合长期影响提出最优方案建议。调用即要求深入分析；是否实施、何时实施和实施范围由用户决定。",
+    "developerName": "antu58",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ],
+    "websiteURL": "https://github.com/antu58/myskills",
+    "defaultPrompt": [
+      "使用 $suben 深入分析当前问题，拓展我的知识和方案视野，提出符合整体目标的最优方案建议；是否实施及实施范围由我决定。",
+      "使用 $suben 重新审视这套方案的目标、系统机制和长期代价，比较值得考虑的替代路径。"
+    ]
+  }
+}
